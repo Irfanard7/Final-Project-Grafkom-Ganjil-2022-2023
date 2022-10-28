@@ -1,0 +1,6 @@
+﻿  Demo.cpp
+C:\Users\Irfan Ardiansyah\OneDrive\TIF\GK\FP\Grafika Komputer dan Visualisasi\Grafika Komputer dan Visualisasi\vs\Lesson06\Demo.cpp(182,28): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Irfan Ardiansyah\OneDrive\TIF\GK\FP\Grafika Komputer dan Visualisasi\Grafika Komputer dan Visualisasi\vs\Lesson06\Demo.cpp(183,29): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Irfan Ardiansyah\OneDrive\TIF\GK\FP\Grafika Komputer dan Visualisasi\Grafika Komputer dan Visualisasi\vs\Lesson06\Demo.cpp(206,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Irfan Ardiansyah\OneDrive\TIF\GK\FP\Grafika Komputer dan Visualisasi\Grafika Komputer dan Visualisasi\vs\Lesson06\Demo.cpp(207,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  Lesson06.vcxproj -> C:\Users\Irfan Ardiansyah\OneDrive\TIF\GK\FP\Grafika Komputer dan Visualisasi\Grafika Komputer dan Visualisasi\vs\Debug\Lesson06.exe
