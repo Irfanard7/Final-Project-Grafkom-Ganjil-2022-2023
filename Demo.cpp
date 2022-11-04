@@ -19,6 +19,8 @@ void Demo::Init() {
 
 	BuildColoredCube();
 
+	BuildTree();
+
 	BuildColoredPlane();
 }
 
@@ -31,6 +33,9 @@ void Demo::DeInit() {
 	glDeleteVertexArrays(1, &VAO2);
 	glDeleteBuffers(1, &VBO2);
 	glDeleteBuffers(1, &EBO2);
+	glDeleteVertexArrays(1, &VAO3);
+	glDeleteBuffers(1, &VBO3);
+	glDeleteBuffers(1, &EBO3);
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -63,7 +68,7 @@ void Demo::Render() {
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	// LookAt camera (position, target/direction, up)
-	glm::mat4 view = glm::lookAt(glm::vec3(2, 2, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 view = glm::lookAt(glm::vec3(2, 2, 6), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	GLint viewLoc = glGetUniformLocation(this->shaderProgram, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -78,6 +83,21 @@ void Demo::Render() {
 	DrawColoredCube();
 
 	DrawColoredPlane();
+
+	DrawTree( -2, 1);
+
+	DrawTree(-2, -1);
+
+	DrawTree(1, -2);
+
+	DrawTree(-1.2, 0.8);
+
+	DrawTree(-3, 2);
+
+	DrawTree(-2, 4);
+
+	DrawTree(3, 6);
+
 
 	glDisable(GL_DEPTH_TEST);
 }
@@ -282,6 +302,193 @@ void Demo::DrawColoredCube()
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
+
+}
+
+void Demo::BuildTree() {
+	// set up vertex data (and buffer(s)) and configure vertex attributes
+	// ------------------------------------------------------------------
+	float vertices[] = {
+		// format position, tex coords
+		// front
+		-0.5, -0.5, 0.5,  0.0f,  0.0f,  1.0f, // 0
+		0.5, -0.5, 0.5,   0.0f,  0.0f,  1.0f, // 1
+		0.5,  0.5, 0.5,   0.0f,  0.0f,  1.0f, // 2
+		-0.5,  0.5, 0.5,  0.0f,  0.0f,  1.0f, // 3
+
+		// right
+		0.5,  0.5,  0.5, 1.0f,  0.0f,  0.0f, // 4
+		0.5,  0.5, -0.5, 1.0f,  0.0f,  0.0f, // 5
+		0.5, -0.5, -0.5, 1.0f,  0.0f,  0.0f, // 6
+		0.5, -0.5,  0.5, 1.0f,  0.0f,  0.0f, // 7
+
+		// back
+		-0.5, -0.5, -0.5, 0.0f,  0.0f,  -1.0f, // 8 
+		0.5,  -0.5, -0.5, 0.0f,  0.0f,  -1.0f, // 9
+		0.5,   0.5, -0.5, 0.0f,  0.0f,  -1.0f, // 10
+		-0.5,  0.5, -0.5, 0.0f,  0.0f,  -1.0f, // 11
+
+		// left
+		-0.5, -0.5, -0.5, -1.0f,  0.0f,  0.0f, // 12
+		-0.5, -0.5,  0.5, -1.0f,  0.0f,  0.0f, // 13
+		-0.5,  0.5,  0.5, -1.0f,  0.0f,  0.0f, // 14
+		-0.5,  0.5, -0.5, -1.0f,  0.0f,  0.0f, // 15
+
+		// upper
+		0.5, 0.5,  0.5, 0.0f,  1.0f,  0.0f, // 16
+		-0.5, 0.5, 0.5, 0.0f,  1.0f,  0.0f, // 17
+		-0.5, 0.5, -0.5,0.0f,  1.0f,  0.0f, // 18
+		0.5, 0.5, -0.5, 0.0f,  1.0f,  0.0f, // 19
+
+		// bottom
+		-0.5, -0.5, -0.5, 0.0f,  -1.0f,  0.0f, // 20
+		0.5, -0.5, -0.5,  0.0f,  -1.0f,  0.0f, // 21
+		0.5, -0.5,  0.5,  0.0f,  -1.0f,  0.0f, // 22
+		-0.5, -0.5,  0.5, 0.0f,  -1.0f,  0.0f, // 23
+	};
+
+	unsigned int indices[] = {
+		0,  1,  2,  0,  2,  3,   // front
+		4,  5,  6,  4,  6,  7,   // right
+		8,  9,  10, 8,  10, 11,  // back
+		12, 14, 13, 12, 15, 14,  // left
+		16, 18, 17, 16, 19, 18,  // upper
+		20, 22, 21, 20, 23, 22   // bottom
+	};
+
+	glGenVertexArrays(1, &VAO3);
+	glGenBuffers(1, &VBO3);
+	glGenBuffers(1, &EBO3);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(VAO3);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO3);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// define position pointer layout 0
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(0);
+
+	// define normal pointer layout 2
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+	glBindVertexArray(0);
+
+	// remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
+void Demo::DrawTree(float x, float z)
+{
+	UseShader(shaderProgram);
+
+	glBindVertexArray(VAO3); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+
+	GLint objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
+	GLint modelLoc = glGetUniformLocation(this->shaderProgram, "model");
+
+	//gambar batang
+	objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
+	glUniform3f(objectColorLoc, 0.3f, 0.2f, 0.2f);
+
+	glm::mat4 model;
+	model = glm::translate(model, glm::vec3(x, 0, z));
+	model = glm::scale(model, glm::vec3(0.2,1, 0.2));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+
+	//gambar daun
+	objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
+	glUniform3f(objectColorLoc, 0.4f, 0.92f, 0.8f);
+
+	glm::mat4 model2;
+	model2 = glm::translate(model2, glm::vec3(x, 0.7, z));
+	model2 = glm::scale(model2, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model3;
+	model3 = glm::translate(model3, glm::vec3(x + 0.3, 0.6, z));
+	model3 = glm::scale(model3, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model4;
+	model4 = glm::translate(model4, glm::vec3(x + 0.15, 0.6, z + 0.2));
+	model4 = glm::scale(model4, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model4));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model5;
+	model5 = glm::translate(model5, glm::vec3(x - 0.07, 0.55, z + 0.25));
+	model5 = glm::scale(model5, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model6;
+	model6 = glm::translate(model6, glm::vec3(x - 0.15, 0.75, z + 0.15));
+	model6 = glm::scale(model6, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model6));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model7;
+	model7 = glm::translate(model7, glm::vec3(x - 0.2, 0.8, z + 0.15));
+	model7 = glm::scale(model7, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model7));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model8;
+	model8 = glm::translate(model8, glm::vec3(x - 0.1, 0.65, z - 0.15));
+	model8 = glm::scale(model8, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model8));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glm::mat4 model9;
+	model9 = glm::translate(model9, glm::vec3(x + 0.1, 0.65, z + 0.15));
+	model9 = glm::scale(model9, glm::vec3(0.4, 0.4, 0.4));
+
+	glGetUniformLocation(this->shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model9));
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+
+	glBindVertexArray(0);
 }
 
 void Demo::BuildColoredPlane()
@@ -344,5 +551,5 @@ void Demo::DrawColoredPlane()
 
 int main(int argc, char** argv) {
 	RenderEngine &app = Demo();
-	app.Start("Basic Lighting: Phong Lighting Model", 800, 600, false, false);
+	app.Start("Basic Lighting: Phong Lighting Model", 1600, 900, false, false);
 }

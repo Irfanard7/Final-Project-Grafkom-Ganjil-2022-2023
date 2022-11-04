@@ -13,15 +13,17 @@ public:
 	Demo();
 	~Demo();
 private:
-	GLuint shaderProgram, VBO, VAO, EBO, texture, VBO2, VAO2, EBO2, texture2;
+	GLuint shaderProgram, VBO, VAO, EBO, texture, VBO2, VAO2, EBO2, texture2, VBO3, VAO3, EBO3, texture3;
 	virtual void Init();
 	virtual void DeInit();
 	virtual void Update(double deltaTime);
 	virtual void Render();
 	virtual void ProcessInput(GLFWwindow *window);
 	void BuildColoredCube();
+	void BuildTree();
 	void BuildColoredPlane();
 	void DrawColoredCube();
 	void DrawColoredPlane();
+	void DrawTree(float x, float z);
 };
 
